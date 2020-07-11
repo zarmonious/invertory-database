@@ -82,7 +82,7 @@ int main(int argc, char **argv)
             break;
 
         case 7:
-            whichWahl = readValue("Sort by what (1 - Inventory-Nr., 2 - Acquisition-year)");
+            whichWahl = readValue("Sort by what (1 - Inventory-Nr., 2 - Yeah)");
             sortItems(items, DATABASE_SIZE, whichWahl);
             break;
 
