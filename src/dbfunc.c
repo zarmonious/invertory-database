@@ -14,7 +14,7 @@ void initItems(Data_t *items, long len)
 void printItem(Data_t *item)
 {
     printf(
-        "Name:                 %s\nMarke:                %s\nInventar-Nr.:         %s\nAnschaffungsjahr:     %ld\n",
+        "Name:                 %s\nBrand:                %s\nInventory-Nr.:         %s\Year:     %ld\n",
         item->name,
         item->brand,
         item->invNr,
@@ -24,13 +24,13 @@ void printItem(Data_t *item)
 
 void printDB(Data_t *items, long len)
 {
-    printf("Datenbankeintraege:\n");
+    printf("Database entries:\n");
 
     for (long i = 0; i < len; i++)
     {
         if ( strlen(items[i].invNr) != 0 )
         {
-            printf("---------------Eintrag %ld---------------\n", i+1);
+            printf("---------------Entry %ld---------------\n", i+1);
             printItem(&items[i]);
         }
     }
@@ -55,7 +55,7 @@ long readValue(char *name)
         }
         else
         {
-            fprintf(stderr, "%s ist ungueltig!Bitte noch mal eingeben: ", name);
+            fprintf(stderr, "%s is invalid! Please enter again: ", name);
 
         }
     }
@@ -86,7 +86,7 @@ void readString(char *name, char *text, long len)       //teilweise Ref04 Bsp
             }
             else
             {
-                printf("Zeichenkette ist zu lang! Bitte nochmal eingeben:\n");
+                printf("String is too long! Please enter again:\n");
                 texttemp = text;
                 while (getchar() != '\n') {;}
             }
@@ -105,16 +105,16 @@ long addItem(Data_t *items, long len)
             readString("Inventar-Nr.", items[i].invNr, TEXT_LEN);
             if ( strlen(items[i].invNr) == 0 )
             {
-                fprintf( stderr, "Fehler. Inventar-Nr. ist leer.\n");
+                fprintf( stderr, "Error. Inventory number is empty.\n");
                 return -1;
             }
-            items[i].year = readValue("Anschaffungsjahr");
+            items[i].year = readValue("Year");
 
             return 0;
         }
     }
 
-    fprintf( stderr, "Fehler! Keine freien Eintraege mehr verhanden.\n");
+    fprintf( stderr, "Error! No free entries available.\n");
     return -1;
 }
 
@@ -122,7 +122,7 @@ long deleteItem(Data_t *items, long len)
 {
     long index;
 
-    index = readValue("Welchen Eintrag loeschen");
+    index = readValue("Which entry to delete");
 
     if ( index >= 1 && index <= len && strlen(items[index-1].invNr) != 0 )
     {
@@ -131,7 +131,7 @@ long deleteItem(Data_t *items, long len)
     }
     else
     {
-        fprintf( stderr, "Fehler! Element ist bereits leer oder der gewaehlte Index ist ungueltig.\n");
+        fprintf( stderr, "Error! Element is already empty or the selected index is invalid.\n");
         return -1;
     }
 }
@@ -142,7 +142,7 @@ long saveDB(Data_t *items, long len, char *outputFile)
 
     if ( (datei = fopen( outputFile, "w")) )
     {
-        fprintf( datei, "#Name\t#Marke\t#Inventar-Nr.\t#Jahr\n");
+        fprintf( datei, "#Name\t#Brand\t#Inventory-Nr.\t#Yeah\n");
         for (int i = 0; i < len; i++)
         {
             if ( strlen(items[i].invNr) != 0 )
@@ -160,7 +160,7 @@ long saveDB(Data_t *items, long len, char *outputFile)
     }
     else
     {
-        fprintf( stderr, "Fehler beim Oeffnen der Datei!\n");
+        fprintf( stderr, "Error when opening the file!\n");
         return -1;
     }
 }
@@ -171,11 +171,11 @@ long loadDB(Data_t *items, long len, char *inputFile)
     int values;
     char dummy[255];
 
-    initItems(items, len);                      // clear alle einträge
+    initItems(items, len);                      // clear all entries
 
     if ( (datei = fopen( inputFile, "r")) )
     {
-        fgets(dummy, 255, datei);               // erste zeile lesen und ignorieren
+        fgets(dummy, 255, datei);               // read the first line and ignore it
 
         for ( int i = 0; i < len; i++)
         {
@@ -198,7 +198,7 @@ long loadDB(Data_t *items, long len, char *inputFile)
                 }
                 else
                 {
-                    fprintf( stderr, "Fehler beim Lesen der Datei!\n");
+                    fprintf( stderr, "Error reading file!\n");
                     fclose(datei);
                     return -1;
                 }
@@ -208,7 +208,7 @@ long loadDB(Data_t *items, long len, char *inputFile)
     }
     else
     {
-        fprintf( stderr, "Fehler beim Oeffnen der Datei!\n");
+        fprintf( stderr, "Error when opening the file!\n");
         return -1;
     }
 
@@ -238,7 +238,7 @@ long searchFile(char *inputFile, char *key, long ignoreCase)
 
     if ( (datei = fopen( inputFile, "r")) )
     {
-        fgets(dummy, 255, datei);               // erste zeile lesen und ignorieren
+        fgets(dummy, 255, datei);               // read the first line and ignore it
 
         while ( !feof(datei) )
         {
@@ -253,7 +253,7 @@ long searchFile(char *inputFile, char *key, long ignoreCase)
                          &fileItemCompare.year );
 
 
-            if (values != 4)                       // Fehlerfälle
+            if (values != 4)                       // Errors
             {
 
                 if (feof(datei))                   // EOF -> leave
@@ -263,7 +263,7 @@ long searchFile(char *inputFile, char *key, long ignoreCase)
                 }
                 else
                 {
-                    fprintf( stderr, "Fehler beim Lesen der Datei!\n");
+                    fprintf( stderr, "Error reading file!\n");
                     fclose(datei);
                     return -1;
                 }
@@ -277,7 +277,7 @@ long searchFile(char *inputFile, char *key, long ignoreCase)
                 strcpy(fileItemOutput.invNr, fileItemCompare.invNr);
                 fileItemOutput.year = fileItemCompare.year;
 
-                if ( ignoreCase != 0)                                      // Case ja/nein
+                if ( ignoreCase != 0)                                      // Case yes/no
                 {
                     caseToLower(fileItemCompare.name, TEXT_LEN);
                     caseToLower(fileItemCompare.brand, TEXT_LEN);
@@ -303,7 +303,7 @@ long searchFile(char *inputFile, char *key, long ignoreCase)
 
         if ( match == 0)
         {
-            fprintf( stderr, "Suche nach \"%s\" war ergebnisslos.\n", keyOutput);
+            fprintf( stderr, "Did not find \"%s\".\n", keyOutput);
         }
 
         fclose(datei);
@@ -311,16 +311,19 @@ long searchFile(char *inputFile, char *key, long ignoreCase)
     }
     else
     {
-        fprintf( stderr, "Fehler beim Oeffnen der Datei!\n");
+        fprintf( stderr, "Error when opening the file!\n");
         return -1;
     }
 }
 
 long sortItems(Data_t *items, long len, long which)
 {
+ /**
+ * @see "Programmieren in C" ( R.Klima, S.Selberherr) https://www.springer.com/de/book/9783709103920
+ */
     Data_t h;
 
-    if (which == 2)            // 2 für das Anschaffungsjahr; (BubbleSort aus dem Buch)
+    if (which == 2)            //  (BubbleSort from a book)
     {
         for ( long j = len - 1; j > 0; j = j - 1 )
         {
@@ -339,7 +342,7 @@ long sortItems(Data_t *items, long len, long which)
         return 0;
     }
 
-    else if (which == 1)                       // für die Inventar-Nr.; (Minimumsuche)
+    else if (which == 1)                       // for the Inventory-Nr.; (Minimumsuche)
     {
         long min, len1;
         len1= len - 1;
@@ -384,7 +387,7 @@ long addFromFile(Data_t *items, long len, char *inputFile, char *key)
 
     if ( (datei = fopen( inputFile, "r")) )
     {
-        fgets(dummy, 255, datei);               // erste zeile lesen und ignorieren
+        fgets(dummy, 255, datei);               // read the first line and ignore it
 
         while ( !feof(datei) )
         {
@@ -399,7 +402,7 @@ long addFromFile(Data_t *items, long len, char *inputFile, char *key)
                          &fileItemCompare.year );
 
 
-            if (values != 4)                       // Fehlerfälle
+            if (values != 4)                       // Errors
             {
 
                 if (feof(datei))                   // EOF -> leave
@@ -465,11 +468,11 @@ long addFromFile(Data_t *items, long len, char *inputFile, char *key)
 
                     if ( freeSpaceFound == 0)
                     {
-                         fprintf( stderr, "Konnte keine freie Platz finden, um gefundene Datensatz aus Datei zu laden.\n");
+                         fprintf( stderr, "Couldn't find free space to load found in a file entry.\n");
                     }
                     else
                     {
-                        printf("Gefundene Datensatz wurde erfolgreich geladen.\n");
+                        printf("Found data record was loaded successfully.\n");
                     }
                 }
             }
@@ -477,7 +480,7 @@ long addFromFile(Data_t *items, long len, char *inputFile, char *key)
 
         if ( match == 0)
         {
-            fprintf( stderr, "Suche nach \"%s\" war ergebnisslos.\n", key);
+            fprintf( stderr, "Did not find \"%s\".\n", key);
         }
 
         fclose(datei);
@@ -485,7 +488,7 @@ long addFromFile(Data_t *items, long len, char *inputFile, char *key)
     }
     else
     {
-        fprintf( stderr, "Fehler beim Oeffnen der Datei!\n");
+        fprintf( stderr, "Error when opening the file!\n");
         return -1;
     }
 }
